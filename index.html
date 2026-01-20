@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Little English Hero</title>
+    <title>English Speaking L1-L10</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,17 +14,17 @@
 
     <style>
         :root {
-            --primary: #4ECDC4;
-            --accent: #FF6B6B;
-            --yellow: #FFE66D;
-            --bg: #F7FFF7;
-            --text: #2D3436;
+            --primary: #4ECDC4;  /* 清新綠 */
+            --accent: #FF6B6B;   /* 活潑紅 */
+            --yellow: #FFE66D;   /* 亮眼黃 */
+            --bg: #F7FFF7;       /* 淺白底 */
+            --text: #2D3436;     /* 深灰字 */
         }
 
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 移除點擊藍框 */
+            user-select: none; /* 禁止長按選取文字 */
         }
 
         body {
@@ -35,7 +35,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden; /* 防止整體頁面捲動 */
+            overflow: hidden; /* 固定頁面，只讓內容區捲動 */
         }
 
         /* 頂部導航區 */
@@ -49,25 +49,26 @@
         .app-title {
             text-align: center;
             color: var(--accent);
-            font-size: 1.2rem;
-            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            margin: 0 0 12px 0;
             font-weight: 600;
         }
 
-        /* 橫向捲動選單 */
+        /* 橫向捲動選單 (L1, L2...) */
         .nav-scroller {
             display: flex;
             overflow-x: auto;
             gap: 10px;
             padding-bottom: 5px;
-            scrollbar-width: none; /* Firefox 隱藏捲軸 */
+            padding-right: 15px;
+            scrollbar-width: none;
         }
-        .nav-scroller::-webkit-scrollbar { display: none; } /* Chrome 隱藏捲軸 */
+        .nav-scroller::-webkit-scrollbar { display: none; }
 
         .nav-btn {
             background: #f1f3f5;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 20px;
             white-space: nowrap;
             color: #868e96;
@@ -88,25 +89,26 @@
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 80px; /* 預留底部空間 */
+            padding-bottom: 80px;
+            -webkit-overflow-scrolling: touch; /* iOS 滑動順暢 */
         }
 
-        /* 句子卡片 */
+        /* 句子卡片設計 */
         .card {
             background: white;
             border-radius: 25px;
-            padding: 25px 20px;
-            margin-bottom: 20px;
+            padding: 30px 20px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             text-align: center;
             border: 1px solid #f0f0f0;
         }
 
         .sentence {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: var(--text);
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             line-height: 1.4;
         }
 
@@ -114,22 +116,23 @@
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: 25px;
-            align-items: flex-start;
+            gap: 30px;
+            align-items: center;
         }
 
+        /* 圓形按鈕共用樣式 */
         .action-btn {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: none;
-            font-size: 28px;
+            font-size: 30px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.1s;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1); /* 立體感 */
         }
 
         .action-btn:active {
@@ -137,33 +140,41 @@
             box-shadow: none;
         }
 
+        /* 喇叭按鈕 (黃) */
         .speak-btn {
             background: var(--yellow);
-            color: #5f5f5f;
+            color: #555;
         }
 
+        /* 麥克風按鈕 (紅) */
         .rec-btn {
             background: var(--accent);
             color: white;
         }
         
+        /* 錄音中狀態 */
         .rec-btn.recording {
             background: #333;
             animation: pulse 1.5s infinite;
         }
 
+        /* 播放我的錄音按鈕 (綠長條) */
         .play-my-voice-btn {
             background: #51cf66;
             color: white;
-            width: 100%;
-            border-radius: 15px;
-            padding: 10px;
-            margin-top: 15px;
+            width: 80%;
+            border-radius: 50px;
+            padding: 12px;
+            margin: 20px auto 0 auto;
             border: none;
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            display: none; /* 預設隱藏，錄音完才顯示 */
+            display: none; /* 預設隱藏 */
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.3);
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         @keyframes pulse {
@@ -172,20 +183,12 @@
             100% { transform: scale(1); }
         }
 
-        /* 提示字 */
-        .hint {
-            font-size: 0.8rem;
-            color: #ccc;
-            margin-top: 5px;
-            display: block;
-        }
-
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 class="app-title">🌟 Little English Hero (L1-L10)</h1>
+        <h1 class="app-title">🌟 英語口說挑戰 (L1-L10)</h1>
         <div class="nav-scroller" id="navScroller">
             </div>
     </div>
@@ -194,7 +197,8 @@
         </div>
 
 <script>
-    // --- 課程資料庫 ---
+    // --- 1. 課程資料庫 (L1-L10) ---
+    // 已根據您的圖片文字進行整理
     const lessons = {
         "L1 I Can Move": [
             "I can move.", "I can swing.", "I can walk.", "I can swim.",
@@ -254,16 +258,16 @@
         ],
         "L10 Super Mom": [
             "She is smart. She can do math.", "She is strong. She can carry ten bags.",
-            "She is fat. She can run.", "She sees everything.",
+            "She is fast. She can run.", "She sees everything.",
             "She can find my socks.", "She can fix anything.",
             "She can sew my shirt."
         ]
     };
 
     let currentLesson = Object.keys(lessons)[0];
-    let mediaRecorders = {}; // 儲存每個卡片的錄音器
-    let audioChunks = {};    // 儲存錄音片段
-    let audioBlobs = {};     // 儲存錄音檔
+    let mediaRecorders = {}; 
+    let audioChunks = {};
+    let audioBlobs = {};
 
     // --- 初始化 ---
     function init() {
@@ -271,14 +275,17 @@
         renderCards(currentLesson);
     }
 
-    // --- 渲染選單 ---
+    // --- 2. 介面渲染：橫向選單 ---
     function renderNav() {
         const nav = document.getElementById('navScroller');
         nav.innerHTML = '';
-        Object.keys(lessons).forEach((lessonName, index) => {
+        Object.keys(lessons).forEach((lessonName) => {
             const btn = document.createElement('button');
+            // 提取簡短標題 (例如 "L1 I Can Move" -> "L1")
+            const shortTitle = lessonName.split(' ')[0] + ' ' + lessonName.split(' ').slice(1,3).join(' ');
+            
             btn.className = `nav-btn ${lessonName === currentLesson ? 'active' : ''}`;
-            btn.innerText = lessonName.split(' ')[0] + ' ' + lessonName.split(' ')[1]; // 簡短顯示
+            btn.innerText = shortTitle;
             btn.onclick = () => {
                 currentLesson = lessonName;
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -289,11 +296,12 @@
         });
     }
 
-    // --- 渲染卡片 ---
+    // --- 3. 介面渲染：句子卡片 ---
     function renderCards(lessonName) {
         const container = document.getElementById('contentArea');
         container.innerHTML = '';
-        // 重置錄音狀態
+        
+        // 切換課程時，重置錄音狀態
         mediaRecorders = {};
         audioChunks = {};
         audioBlobs = {};
@@ -301,52 +309,54 @@
         lessons[lessonName].forEach((sentence, index) => {
             const card = document.createElement('div');
             card.className = 'card';
+            
+            // 建立卡片 HTML
             card.innerHTML = `
                 <div class="sentence">${sentence}</div>
                 <div class="btn-group">
-                    <div>
-                        <button class="action-btn speak-btn" onclick="speak('${sentence.replace(/'/g, "\\'")}')">🔊</button>
-                    </div>
-                    <div>
-                        <button class="action-btn rec-btn" id="rec-btn-${index}" onclick="toggleRecord(${index})">🎤</button>
-                    </div>
+                    <button class="action-btn speak-btn" onclick="speak('${sentence.replace(/'/g, "\\'")}')">🔊</button>
+                    <button class="action-btn rec-btn" id="rec-btn-${index}" onclick="toggleRecord(${index})">🎤</button>
                 </div>
-                <button class="play-my-voice-btn" id="play-btn-${index}" onclick="playMyVoice(${index})">▶️ 播我的錄音</button>
+                <button class="play-my-voice-btn" id="play-btn-${index}" onclick="playMyVoice(${index})">
+                    ▶️ 播放我的錄音
+                </button>
             `;
             container.appendChild(card);
         });
     }
 
-    // --- 老師唸 (TTS) ---
+    // --- 4. 老師唸 (TTS) ---
     function speak(text) {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-US';
-        msg.rate = 0.8; // 稍微放慢語速
+        msg.lang = 'en-US'; 
+        msg.rate = 0.85; // 稍微放慢語速適合學習
         window.speechSynthesis.speak(msg);
     }
 
-    // --- 錄音功能 ---
+    // --- 5. 跨平台錄音功能 (iOS/Android) ---
     async function toggleRecord(index) {
         const btn = document.getElementById(`rec-btn-${index}`);
         const playBtn = document.getElementById(`play-btn-${index}`);
 
-        // 如果正在錄音 -> 停止
+        // A. 停止錄音
         if (btn.classList.contains('recording')) {
-            mediaRecorders[index].stop();
+            if (mediaRecorders[index] && mediaRecorders[index].state !== 'inactive') {
+                mediaRecorders[index].stop();
+            }
             btn.classList.remove('recording');
-            btn.innerText = '🎤';
+            btn.innerHTML = '🎤'; // 變回麥克風
             return;
         }
 
-        // 如果沒在錄音 -> 開始
+        // B. 開始錄音
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            // iOS 支援格式檢查
+            // 關鍵：iOS Safari 需要 mp4，Chrome/Android 支援 webm
             let mimeType = 'audio/webm';
             if (!MediaRecorder.isTypeSupported('audio/webm')) {
-                mimeType = 'audio/mp4'; // iOS Safari 常用
+                mimeType = 'audio/mp4'; // iOS Fallback
             }
 
             const recorder = new MediaRecorder(stream, { mimeType: mimeType });
@@ -354,30 +364,36 @@
             audioChunks[index] = [];
 
             recorder.ondataavailable = (e) => {
-                audioChunks[index].push(e.data);
+                if (e.data.size > 0) {
+                    audioChunks[index].push(e.data);
+                }
             };
 
             recorder.onstop = () => {
+                // 建立暫時的播放連結 (不儲存到伺服器)
                 const blob = new Blob(audioChunks[index], { type: mimeType });
-                audioBlobs[index] = URL.createObjectURL(blob);
-                playBtn.style.display = 'block'; // 顯示播放按鈕
+                const audioUrl = URL.createObjectURL(blob);
+                audioBlobs[index] = audioUrl;
                 
-                // 停止麥克風使用
+                // 顯示播放按鈕
+                playBtn.style.display = 'flex';
+                
+                // 釋放麥克風
                 stream.getTracks().forEach(track => track.stop());
             };
 
             recorder.start();
             btn.classList.add('recording');
-            btn.innerText = '⏹'; // 停止符號
-            playBtn.style.display = 'none'; // 錄音時隱藏播放鍵
+            btn.innerHTML = '⬛'; // 顯示停止圖示
+            playBtn.style.display = 'none'; // 錄音時隱藏舊的播放鍵
 
         } catch (err) {
-            console.error(err);
-            alert('無法存取麥克風，請確認權限或使用 Safari/Chrome 開啟。');
+            console.error("Microphone Error:", err);
+            alert('無法開啟麥克風。請確認：\n1. 允許麥克風權限\n2. 若是 iPhone 請用 Safari 開啟\n3. 網址必須是 HTTPS');
         }
     }
 
-    // --- 播我的錄音 ---
+    // --- 6. 播放錄音 ---
     function playMyVoice(index) {
         if (audioBlobs[index]) {
             const audio = new Audio(audioBlobs[index]);
@@ -385,7 +401,7 @@
         }
     }
 
-    // 啟動
+    // 啟動程式
     init();
 
 </script>
