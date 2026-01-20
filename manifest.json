@@ -1,6 +1,6 @@
 {
-  "name": "English Speaking L1-L10",
-  "short_name": "Eng Practice",
+  "name": "小班英文句型練習",
+  "short_name": "小班英文句型練習",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F0F4F8",
@@ -15,5 +15,3 @@
     }
   ]
 }
-
-
