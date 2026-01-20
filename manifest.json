@@ -1,0 +1,17 @@
+{
+  "name": "English Speaking Practice",
+  "short_name": "Eng Practice",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#E0F7FA",
+  "theme_color": "#00BCD4",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
