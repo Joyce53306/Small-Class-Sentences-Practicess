@@ -9,7 +9,6 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <meta name="apple-mobile-web-app-title" content="小班英文句型練習">
     
     <link rel="apple-touch-icon" href="icon.png">
@@ -43,7 +42,6 @@
             overflow: hidden;
         }
 
-        /* 頂部選單區 */
         .header {
             background: white;
             padding: 15px 0 15px 15px;
@@ -88,7 +86,6 @@
             box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
         }
 
-        /* 內容區 */
         .content-area {
             flex: 1;
             overflow-y: auto;
@@ -97,7 +94,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* 卡片樣式 */
         .card {
             background: white;
             border-radius: 25px;
@@ -116,7 +112,6 @@
             line-height: 1.4;
         }
 
-        /* 按鈕區塊 */
         .btn-group {
             display: flex;
             justify-content: center;
@@ -125,7 +120,6 @@
             min-height: 80px;
         }
 
-        /* 通用圓形按鈕 */
         .action-btn {
             width: 70px;
             height: 70px;
@@ -145,13 +139,11 @@
             box-shadow: none;
         }
 
-        /* 黃色：老師唸 */
         .speak-btn {
             background: var(--yellow);
             color: #555;
         }
 
-        /* 紅色：錄音 */
         .rec-btn {
             background: var(--accent);
             color: white;
@@ -162,7 +154,6 @@
             animation: pulse 1.5s infinite;
         }
 
-        /* 藍色：播放錄音 (圓形) */
         .play-btn {
             background: var(--blue);
             color: white;
@@ -180,16 +171,23 @@
 <body>
 
     <div class="header">
-        <h1 class="app-title">🌟 英語口說挑戰 (L1-L10)</h1>
-        <div class="nav-scroller" id="navScroller">
-            </div>
+        <h1 class="app-title">🌟 小班英文句型練習 (L1-L10)</h1>
+        <div class="nav-scroller" id="navScroller"></div>
     </div>
 
-    <div class="content-area" id="contentArea">
-        </div>
+    <div class="content-area" id="contentArea"></div>
 
 <script>
-    // --- 課程資料 ---
+    // --- 聲音庫載入 ---
+    let voices = [];
+    function loadVoices() {
+        voices = window.speechSynthesis.getVoices();
+    }
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+
     const lessons = {
         "L1 I Can Move": [
             "I can move.", "I can swing.", "I can walk.", "I can swim.",
@@ -263,15 +261,15 @@
     function init() {
         renderNav();
         renderCards(currentLesson);
+        loadVoices();
     }
 
-    // --- 渲染選單 (只顯示 L1, L2...) ---
     function renderNav() {
         const nav = document.getElementById('navScroller');
         nav.innerHTML = '';
         Object.keys(lessons).forEach((lessonName) => {
             const btn = document.createElement('button');
-            const shortTitle = lessonName.split(' ')[0]; // 取出 L1
+            const shortTitle = lessonName.split(' ')[0];
             btn.className = `nav-btn ${lessonName === currentLesson ? 'active' : ''}`;
             btn.innerText = shortTitle;
             btn.onclick = () => {
@@ -284,7 +282,6 @@
         });
     }
 
-    // --- 渲染卡片 ---
     function renderCards(lessonName) {
         const container = document.getElementById('contentArea');
         container.innerHTML = '';
@@ -307,16 +304,35 @@
         });
     }
 
-    // --- 老師唸 ---
+    // --- 關鍵修正：語調優化 ---
     function speak(text) {
         window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-US'; 
-        msg.rate = 0.85; 
+
+        // 技巧：如果句子結尾是句號 '.'，我們在「唸」的時候把它去掉
+        // 這樣瀏覽器就不會執行「句尾降調」的指令，聲音會比較平穩
+        let textToSpeak = text;
+        if (textToSpeak.endsWith('.')) {
+            textToSpeak = textToSpeak.slice(0, -1); // 移除最後一個字元(句號)
+        }
+
+        const msg = new SpeechSynthesisUtterance(textToSpeak);
+        
+        // 嘗試抓取比較自然的英文聲音
+        const preferredVoice = voices.find(v => v.name.includes("Google US English")) || 
+                               voices.find(v => v.name.includes("Samantha")) || 
+                               voices.find(v => v.lang === "en-US");
+
+        if (preferredVoice) {
+            msg.voice = preferredVoice;
+        }
+
+        msg.lang = 'en-US';
+        msg.rate = 1.0;  // 回歸標準速度，避免拖音
+        msg.pitch = 1.0; // 回歸標準音調，避免怪異
+        
         window.speechSynthesis.speak(msg);
     }
 
-    // --- 錄音功能 ---
     async function toggleRecord(index) {
         const recBtn = document.getElementById(`rec-btn-${index}`);
         const playBtn = document.getElementById(`play-btn-${index}`);
