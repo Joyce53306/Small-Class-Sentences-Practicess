@@ -1,6 +1,6 @@
 {
-  "name": "Little English Hero",
-  "short_name": "Eng Hero",
+  "name": "English Speaking L1-L10",
+  "short_name": "Eng L1-L10",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F0F4F8",
@@ -15,3 +15,4 @@
     }
   ]
 }
+
