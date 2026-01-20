@@ -1,6 +1,6 @@
 {
   "name": "English Speaking L1-L10",
-  "short_name": "Eng L1-L10",
+  "short_name": "Eng Practice",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F0F4F8",
@@ -15,4 +15,5 @@
     }
   ]
 }
+
 
