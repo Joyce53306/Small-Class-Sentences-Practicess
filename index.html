@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>英語口說挑戰 (L1-L10)</title>
+    
+    <title>小班英文句型練習</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <meta name="apple-mobile-web-app-title" content="小班英文句型練習">
+    
     <link rel="apple-touch-icon" href="icon.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
@@ -49,7 +53,7 @@
 
         .app-title {
             text-align: center;
-            color: var(--accent); /* 跟中班 APP 一樣用亮色 */
+            color: var(--accent);
             font-size: 1.2rem;
             margin: 0 0 15px 0;
             font-weight: 600;
@@ -68,7 +72,7 @@
         .nav-btn {
             background: #f1f3f5;
             border: none;
-            padding: 10px 20px; /* 按鈕大一點更好點 */
+            padding: 10px 20px;
             border-radius: 25px;
             white-space: nowrap;
             color: #868e96;
@@ -79,7 +83,7 @@
         }
 
         .nav-btn.active {
-            background: var(--primary); /* 選中時變綠色 */
+            background: var(--primary);
             color: white;
             box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
         }
@@ -261,19 +265,15 @@
         renderCards(currentLesson);
     }
 
-    // --- 修改點：按鈕文字只顯示 L1, L2... ---
+    // --- 渲染選單 (只顯示 L1, L2...) ---
     function renderNav() {
         const nav = document.getElementById('navScroller');
         nav.innerHTML = '';
         Object.keys(lessons).forEach((lessonName) => {
             const btn = document.createElement('button');
-            
-            // 這裡將 "L1 I Can Move" 切割，只取第一個字 "L1"
-            const shortTitle = lessonName.split(' ')[0]; 
-            
+            const shortTitle = lessonName.split(' ')[0]; // 取出 L1
             btn.className = `nav-btn ${lessonName === currentLesson ? 'active' : ''}`;
-            btn.innerText = shortTitle; // 設定按鈕文字為 L1, L2...
-            
+            btn.innerText = shortTitle;
             btn.onclick = () => {
                 currentLesson = lessonName;
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -284,6 +284,7 @@
         });
     }
 
+    // --- 渲染卡片 ---
     function renderCards(lessonName) {
         const container = document.getElementById('contentArea');
         container.innerHTML = '';
@@ -306,6 +307,7 @@
         });
     }
 
+    // --- 老師唸 ---
     function speak(text) {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
@@ -314,6 +316,7 @@
         window.speechSynthesis.speak(msg);
     }
 
+    // --- 錄音功能 ---
     async function toggleRecord(index) {
         const recBtn = document.getElementById(`rec-btn-${index}`);
         const playBtn = document.getElementById(`play-btn-${index}`);
