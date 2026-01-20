@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>English Speaking L1-L10</title>
+    <title>英語口說挑戰 (L1-L10)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
             --primary: #4ECDC4;
             --accent: #FF6B6B;
             --yellow: #FFE66D;
-            --blue: #54a0ff; /* 新增藍色給播放鍵 */
+            --blue: #54a0ff;
             --bg: #F7FFF7;
             --text: #2D3436;
         }
@@ -49,16 +49,16 @@
 
         .app-title {
             text-align: center;
-            color: var(--accent);
-            font-size: 1.1rem;
-            margin: 0 0 12px 0;
+            color: var(--accent); /* 跟中班 APP 一樣用亮色 */
+            font-size: 1.2rem;
+            margin: 0 0 15px 0;
             font-weight: 600;
         }
 
         .nav-scroller {
             display: flex;
             overflow-x: auto;
-            gap: 10px;
+            gap: 12px;
             padding-bottom: 5px;
             padding-right: 15px;
             scrollbar-width: none;
@@ -68,18 +68,18 @@
         .nav-btn {
             background: #f1f3f5;
             border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 10px 20px; /* 按鈕大一點更好點 */
+            border-radius: 25px;
             white-space: nowrap;
             color: #868e96;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .nav-btn.active {
-            background: var(--primary);
+            background: var(--primary); /* 選中時變綠色 */
             color: white;
             box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
         }
@@ -112,13 +112,13 @@
             line-height: 1.4;
         }
 
-        /* 按鈕區塊：確保按鈕置中排列 */
+        /* 按鈕區塊 */
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: 20px; /* 按鈕之間的距離 */
+            gap: 20px;
             align-items: center;
-            min-height: 80px; /* 預留高度避免跳動 */
+            min-height: 80px;
         }
 
         /* 通用圓形按鈕 */
@@ -132,7 +132,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: transform 0.1s;
             box-shadow: 0 6px 0 rgba(0,0,0,0.1);
         }
 
@@ -153,17 +153,16 @@
             color: white;
         }
         
-        /* 錄音中：閃爍動畫 */
         .rec-btn.recording {
             background: #333;
             animation: pulse 1.5s infinite;
         }
 
-        /* 藍色：播放錄音 (預設隱藏) */
+        /* 藍色：播放錄音 (圓形) */
         .play-btn {
             background: var(--blue);
             color: white;
-            display: none; /* 一開始不顯示 */
+            display: none;
         }
 
         @keyframes pulse {
@@ -177,7 +176,7 @@
 <body>
 
     <div class="header">
-        <h1 class="app-title">🌟 English Speaking L1-L10</h1>
+        <h1 class="app-title">🌟 英語口說挑戰 (L1-L10)</h1>
         <div class="nav-scroller" id="navScroller">
             </div>
     </div>
@@ -186,7 +185,7 @@
         </div>
 
 <script>
-    // --- 1. 課程資料 (修正了部分拼字錯誤) ---
+    // --- 課程資料 ---
     const lessons = {
         "L1 I Can Move": [
             "I can move.", "I can swing.", "I can walk.", "I can swim.",
@@ -262,15 +261,19 @@
         renderCards(currentLesson);
     }
 
-    // --- 2. 介面：橫向選單 ---
+    // --- 修改點：按鈕文字只顯示 L1, L2... ---
     function renderNav() {
         const nav = document.getElementById('navScroller');
         nav.innerHTML = '';
         Object.keys(lessons).forEach((lessonName) => {
             const btn = document.createElement('button');
-            const shortTitle = lessonName.split(' ')[0] + ' ' + lessonName.split(' ')[1];
+            
+            // 這裡將 "L1 I Can Move" 切割，只取第一個字 "L1"
+            const shortTitle = lessonName.split(' ')[0]; 
+            
             btn.className = `nav-btn ${lessonName === currentLesson ? 'active' : ''}`;
-            btn.innerText = shortTitle;
+            btn.innerText = shortTitle; // 設定按鈕文字為 L1, L2...
+            
             btn.onclick = () => {
                 currentLesson = lessonName;
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -281,12 +284,9 @@
         });
     }
 
-    // --- 3. 介面：卡片渲染 ---
     function renderCards(lessonName) {
         const container = document.getElementById('contentArea');
         container.innerHTML = '';
-        
-        // 重置狀態
         mediaRecorders = {};
         audioChunks = {};
         audioBlobs = {};
@@ -294,8 +294,6 @@
         lessons[lessonName].forEach((sentence, index) => {
             const card = document.createElement('div');
             card.className = 'card';
-            
-            // 注意：這裡新增了一個 class 為 play-btn 的按鈕，預設是隱藏的
             card.innerHTML = `
                 <div class="sentence">${sentence}</div>
                 <div class="btn-group">
@@ -308,7 +306,6 @@
         });
     }
 
-    // --- 4. 老師唸 (TTS) ---
     function speak(text) {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
@@ -317,12 +314,10 @@
         window.speechSynthesis.speak(msg);
     }
 
-    // --- 5. 跨平台錄音與播放邏輯 ---
     async function toggleRecord(index) {
         const recBtn = document.getElementById(`rec-btn-${index}`);
         const playBtn = document.getElementById(`play-btn-${index}`);
 
-        // A. 停止錄音
         if (recBtn.classList.contains('recording')) {
             if (mediaRecorders[index] && mediaRecorders[index].state !== 'inactive') {
                 mediaRecorders[index].stop();
@@ -332,14 +327,10 @@
             return;
         }
 
-        // B. 開始錄音
         try {
-            // 每次重新錄音時，隱藏播放鍵，並清空舊的錄音
             playBtn.style.display = 'none';
-            
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            // iOS 支援 mp4, Android/Chrome 支援 webm
             let mimeType = 'audio/webm';
             if (!MediaRecorder.isTypeSupported('audio/webm')) {
                 mimeType = 'audio/mp4'; 
@@ -359,17 +350,13 @@
                 const blob = new Blob(audioChunks[index], { type: mimeType });
                 const audioUrl = URL.createObjectURL(blob);
                 audioBlobs[index] = audioUrl;
-                
-                // 錄音完成後：顯示藍色圓形播放鍵
                 playBtn.style.display = 'flex';
-                
-                // 釋放麥克風
                 stream.getTracks().forEach(track => track.stop());
             };
 
             recorder.start();
             recBtn.classList.add('recording');
-            recBtn.innerHTML = '⬛'; // 停止符號
+            recBtn.innerHTML = '⬛'; 
             
         } catch (err) {
             console.error("Mic Error:", err);
@@ -377,7 +364,6 @@
         }
     }
 
-    // --- 6. 播放錄音 (一次性，不儲存) ---
     function playMyVoice(index) {
         if (audioBlobs[index]) {
             const audio = new Audio(audioBlobs[index]);
