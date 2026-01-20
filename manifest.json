@@ -1,10 +1,10 @@
 {
-  "name": "English Speaking Practice",
-  "short_name": "Eng Practice",
+  "name": "Little English Hero",
+  "short_name": "Eng Hero",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#E0F7FA",
-  "theme_color": "#00BCD4",
+  "background_color": "#F0F4F8",
+  "theme_color": "#4ECDC4",
   "orientation": "portrait",
   "icons": [
     {
