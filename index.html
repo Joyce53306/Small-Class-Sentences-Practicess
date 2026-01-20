@@ -2,516 +2,392 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Speaking Practice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Little English Hero</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Eng Practice">
     <link rel="apple-touch-icon" href="icon.png">
-    <meta name="theme-color" content="#00BCD4">
+
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS 樣式設計 (讓介面在手機和電腦都好看) --- */
         :root {
-            --primary-color: #00BCD4;
-            --secondary-color: #FF5722;
-            --bg-color: #E0F7FA;
-            --card-bg: #ffffff;
+            --primary: #4ECDC4;
+            --accent: #FF6B6B;
+            --yellow: #FFE66D;
+            --bg: #F7FFF7;
+            --text: #2D3436;
         }
-        
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            /* 防止手機上雙擊縮放 */
-            touch-action: manipulation; 
+            height: 100vh;
+            overflow: hidden; /* 防止整體頁面捲動 */
         }
 
-        .container {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 25px;
-            width: 100%;
-            max-width: 500px; /* 在大螢幕上限制最大寬度 */
-            text-align: center;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        /* 課程選擇選單 */
-        select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            border: 2px solid var(--primary-color);
-            font-size: 1rem;
+        /* 頂部導航區 */
+        .header {
             background: white;
+            padding: 15px 0 15px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            z-index: 10;
         }
 
-        /* 句子顯示卡片 */
-        .sentence-card {
-            background-color: #f9f9f9;
-            border-radius: 15px;
-            padding: 30px 20px;
-            margin-bottom: 30px;
-            min-height: 80px;
+        .app-title {
+            text-align: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        /* 橫向捲動選單 */
+        .nav-scroller {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 5px;
+            scrollbar-width: none; /* Firefox 隱藏捲軸 */
+        }
+        .nav-scroller::-webkit-scrollbar { display: none; } /* Chrome 隱藏捲軸 */
+
+        .nav-btn {
+            background: #f1f3f5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            color: #868e96;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .sentence-text {
-            font-size: 1.6rem;
-            color: #333;
-            font-weight: bold;
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
+        }
+
+        /* 內容捲動區 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 80px; /* 預留底部空間 */
+        }
+
+        /* 句子卡片 */
+        .card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            text-align: center;
+            border: 1px solid #f0f0f0;
+        }
+
+        .sentence {
+            font-size: 1.4rem;
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 20px;
             line-height: 1.4;
         }
 
-        /* 按鈕區域 */
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+        /* 按鈕群組 */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            align-items: flex-start;
         }
 
-        .btn {
-            padding: 15px;
+        .action-btn {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
             border: none;
-            border-radius: 50%; /* 圓形按鈕 */
-            width: 70px;
-            height: 70px;
-            font-size: 1.8rem;
+            font-size: 28px;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
-            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
         }
 
-        .btn:active {
-            transform: scale(0.95);
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
-        #speakBtn { background-color: var(--primary-color); }
-        #recordBtn { background-color: var(--secondary-color); }
-        #recordBtn.recording { 
-            background-color: #d32f2f; 
+        .speak-btn {
+            background: var(--yellow);
+            color: #5f5f5f;
+        }
+
+        .rec-btn {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .rec-btn.recording {
+            background: #333;
             animation: pulse 1.5s infinite;
         }
-        #playbackBtn { background-color: #4CAF50; }
-        .disabled { opacity: 0.4; pointer-events: none; }
 
-        /* 導航按鈕 (上一句/下一句) */
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .nav-btn {
-            background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 10px 25px;
-            border-radius: 25px;
+        .play-my-voice-btn {
+            background: #51cf66;
+            color: white;
+            width: 100%;
+            border-radius: 15px;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            font-weight: bold;
-        }
-        .nav-btn:hover { background-color: #e0f7fa; }
-
-        .status-text {
-            margin-top: 15px;
-            color: #666;
-            font-size: 0.9rem;
-            height: 1.2em;
+            display: none; /* 預設隱藏，錄音完才顯示 */
         }
 
-        /* 錄音中動畫 */
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 87, 34, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
+
+        /* 提示字 */
+        .hint {
+            font-size: 0.8rem;
+            color: #ccc;
+            margin-top: 5px;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1 id="lessonTitle">English Practice</h1>
-
-    <select id="lessonSelect">
-        </select>
-
-    <div class="sentence-card">
-        <div class="sentence-text" id="currentSentence">Loading...</div>
+    <div class="header">
+        <h1 class="app-title">🌟 Little English Hero (L1-L10)</h1>
+        <div class="nav-scroller" id="navScroller">
+            </div>
     </div>
 
-    <div class="controls">
-        <div>
-            <button id="speakBtn" class="btn" title="老師唸">🔊</button>
-            <div style="margin-top: 5px; font-size: 0.8rem; color: #666;">聽老師唸</div>
+    <div class="content-area" id="contentArea">
         </div>
-        <div>
-            <button id="recordBtn" class="btn" title="開始/停止錄音">🎤</button>
-            <div style="margin-top: 5px; font-size: 0.8rem; color: #666;" id="recLabel">錄音</div>
-        </div>
-        <div>
-            <button id="playbackBtn" class="btn disabled" title="播放我的錄音">▶️</button>
-            <div style="margin-top: 5px; font-size: 0.8rem; color: #666;">播我的聲音</div>
-        </div>
-    </div>
-
-    <div class="status-text" id="status"></div>
-
-    <div class="navigation">
-        <button id="prevBtn" class="nav-btn">← 上一句</button>
-        <span style="align-self: center; color: #999;" id="counter">1 / 10</span>
-        <button id="nextBtn" class="nav-btn">下一句 →</button>
-    </div>
-</div>
-
 
 <script>
-    /* --- JavaScript 邏輯控制 --- */
+    // --- 課程資料庫 ---
+    const lessons = {
+        "L1 I Can Move": [
+            "I can move.", "I can swing.", "I can walk.", "I can swim.",
+            "I can run.", "I can play.", "I can jump.", "I can climb.",
+            "I can dance.", "I can sleep."
+        ],
+        "L2 What Am I?": [
+            "Is it a snake?", "Is it a fox?", "Is it a fish?", "Is it a bear?",
+            "Is it a rabbit?", "Is it a spider?", "Is it a cat?", "Is it a mouse?",
+            "Yes, it is.", "No, it is not."
+        ],
+        "L3 Look at Me!": [
+            "Look at me. I am a monkey.", "Look at me. I am a bird.",
+            "Look at me. I am a pig.", "Look at me. I am a turtle.",
+            "Look at me. I am a dog.", "Look at me. I am a frog.",
+            "Look at me. I am a lion.", "Look at me. I am a butterfly.",
+            "Look at me. I am an alligator.", "Look at me. I am an elephant."
+        ],
+        "L4 Shake Shake": [
+            "Hand, hand, shake, shake.", "Head, head, shake, shake.",
+            "Shoulder, shoulder, shake, shake.", "Tummy, tummy, shake, shake.",
+            "Knee, knee, shake, shake.", "Foot, foot, shake, shake.",
+            "Tongue, tongue, shake, shake.", "Ear, ear, shake, shake.",
+            "Hip, hip, shake, shake.", "Elbow, elbow, shake, shake."
+        ],
+        "L5 What Color": [
+            "The sun is yellow.", "The sky is blue.", "The grass is green.",
+            "The apple is red.", "The flower is purple.",
+            "The leaves are green.", "The tree trunk is brown."
+        ],
+        "L6 Count with Me": [
+            "One, one! Show your thumb.", "Two, two! Touch your shoe.",
+            "Three, three! Pat your knee.", "Four, four! Shut the door.",
+            "Five, five! You can drive.", "Six, six! Let’s mix.",
+            "Seven, seven! Look at heaven.", "Eight, eight! Stand up straight.",
+            "Nine, nine! Take a dive.", "Ten, ten! You can bend."
+        ],
+        "L7 How Many": [
+            "How many eyes do you have?", "I have two eyes.",
+            "How many noses do you have?", "I have one nose.",
+            "How many ears do you have?", "I have two ears.",
+            "How many mouths do you have?", "I have one mouth."
+        ],
+        "L8 Be Like You": [
+            "May I use your tie? So I can go to work.",
+            "May I use your hammer? So I can build a house.",
+            "May I use your rod? So I can go fishing?",
+            "May I use your car? So I can drive.",
+            "May I use your shoes? I want to be like you."
+        ],
+        "L9 Alien": [
+            "I like to go swimming.", "I like to go shopping.",
+            "I like to go to the hospital.", "I like to go to the zoo.",
+            "I like to go to the playground.", "I like to go to the movies.",
+            "I like to go to the beach.", "I like to go to the museum.",
+            "I like to go to school."
+        ],
+        "L10 Super Mom": [
+            "She is smart. She can do math.", "She is strong. She can carry ten bags.",
+            "She is fat. She can run.", "She sees everything.",
+            "She can find my socks.", "She can fix anything.",
+            "She can sew my shirt."
+        ]
+    };
 
-    // 1. 資料準備：將您提供的所有課程內容整理成資料結構
-    const lessonData = [
-        {
-            title: "Lesson One: I Can Move",
-            sentences: [
-                "I can move.", "I can swing.", "I can walk.", "I can swim.",
-                "I can run.", "I can play.", "I can jump.", "I can climb.",
-                "I can dance.", "I can sleep."
-            ]
-        },
-        {
-            title: "Lesson Two: What Am I?",
-            sentences: [
-                "Is it a snake?", "Is it a fox?", "Is it a fish?", "Is it a bear?",
-                "Is it a rabbit?", "Is it a spider?", "Is it a cat?", "Is it a mouse?",
-                "Yes, it is.", "No, it is not."
-            ]
-        },
-        {
-            title: "Lesson Three: Look at Me!",
-            sentences: [
-                "Look at me. I am a monkey.", "Look at me. I am a bird.",
-                "Look at me. I am a pig.", "Look at me. I am a turtle.",
-                "Look at me. I am a dog.", "Look at me. I am a frog.",
-                "Look at me. I am a lion.", "Look at me. I am a butterfly.",
-                "Look at me. I am an alligator.", "Look at me. I am an elephant."
-            ]
-        },
-        {
-            title: "Lesson Four: Shake, Shake",
-            sentences: [
-                "Hand, hand, shake, shake.", "Head, head, shake, shake.",
-                "Shoulder, shoulder, shake, shake.", "Tummy, tummy, shake, shake.",
-                "Knee, knee, shake, shake.", "Foot, foot, shake, shake.",
-                "Tongue, tongue, shake, shake.", "Ear, ear, shake, shake.",
-                "Hip, hip, shake, shake.", "Elbow, elbow, shake, shake."
-            ]
-        },
-        {
-            title: "Lesson Five: What Color Am I?",
-            sentences: [
-                "The sun is yellow.", "The sky is blue.", "The grass is green.",
-                "The apple is red.", "The flower is purple.",
-                "The leaves are green.", "The tree trunk is brown."
-            ]
-        },
-        {
-            title: "Lesson Six: Count with Me!",
-            sentences: [
-                "One, one! Show your thumb.", "Two, two! Touch your shoe.",
-                "Three, three! Pat your knee.", "Four, four! Shut the door.",
-                "Five, five! You can drive.", "Six, six! Let’s mix.",
-                "Seven, seven! Look at heaven.", "Eight, eight! Stand up straight.",
-                "Nine, nine! Take a dive.", "Ten, ten! You can bend."
-            ]
-        },
-        {
-            title: "Lesson Seven: How Many",
-            sentences: [
-                "How many eyes do you have? I have two eyes.",
-                "How many noses do you have? I have one nose.",
-                "How many ears do you have? I have two ears.",
-                "How many mouths do you have? I have one mouth."
-            ]
-        },
-        {
-            title: "Lesson Eight: I Want to Be Like You!",
-            sentences: [
-                "May I use your tie? So I can go to work.",
-                "May I use your hammer? So I can build a house.",
-                "May I use your rod? So I can go fishing?",
-                "May I use your car? So I can drive.",
-                "May I use your shoes? I want to be like you."
-            ]
-        },
-        {
-            title: "Lesson Nine: I Want to Be an Alien",
-            sentences: [
-                "I like to go swimming.", "I like to go shopping.",
-                "I like to go to the hospital.", "I like to go to the zoo.",
-                "I like to go to the playground.", "I like to go to the movies.",
-                "I like to go to the beach.", "I like to go to the museum.",
-                "I like to go to school."
-            ]
-        },
-        {
-            title: "Lesson Ten: Super Mom",
-            sentences: [
-                "She is smart. She can do math.", "She is strong. She can carry ten bags.",
-                "She is fat. She can run.", "She sees everything.",
-                "She can find my socks.", "She can fix anything.",
-                "She can sew my shirt."
-            ]
-        }
-    ];
+    let currentLesson = Object.keys(lessons)[0];
+    let mediaRecorders = {}; // 儲存每個卡片的錄音器
+    let audioChunks = {};    // 儲存錄音片段
+    let audioBlobs = {};     // 儲存錄音檔
 
-    // 變數設定
-    let currentLessonIndex = 0;
-    let currentSentenceIndex = 0;
-    let mediaRecorder;
-    let audioChunks = [];
-    let audioBlob;
-    let playbackAudio = new Audio();
-    let isRecording = false;
-    let synth = window.speechSynthesis;
-    let voices = [];
-
-    // DOM 元素獲取
-    const lessonSelect = document.getElementById('lessonSelect');
-    const lessonTitle = document.getElementById('lessonTitle');
-    const currentSentenceDiv = document.getElementById('currentSentence');
-    const speakBtn = document.getElementById('speakBtn');
-    const recordBtn = document.getElementById('recordBtn');
-    const playbackBtn = document.getElementById('playbackBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const statusDiv = document.getElementById('status');
-    const counterDiv = document.getElementById('counter');
-    const recLabel = document.getElementById('recLabel');
-
-    // --- 初始化功能 ---
+    // --- 初始化 ---
     function init() {
-        // 填入課程下拉選單
-        lessonData.forEach((lesson, index) => {
-            let option = document.createElement('option');
-            option.value = index;
-            option.text = lesson.title;
-            lessonSelect.appendChild(option);
+        renderNav();
+        renderCards(currentLesson);
+    }
+
+    // --- 渲染選單 ---
+    function renderNav() {
+        const nav = document.getElementById('navScroller');
+        nav.innerHTML = '';
+        Object.keys(lessons).forEach((lessonName, index) => {
+            const btn = document.createElement('button');
+            btn.className = `nav-btn ${lessonName === currentLesson ? 'active' : ''}`;
+            btn.innerText = lessonName.split(' ')[0] + ' ' + lessonName.split(' ')[1]; // 簡短顯示
+            btn.onclick = () => {
+                currentLesson = lessonName;
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCards(lessonName);
+            };
+            nav.appendChild(btn);
         });
-
-        // 載入語音包 (解決某些瀏覽器非同步載入問題)
-        populateVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = populateVoices;
-        }
-
-        loadLesson(0);
-        setupEventListeners();
     }
 
-    // 確保載入英文語音
-    function populateVoices() {
-        voices = synth.getVoices().filter(voice => voice.lang.includes('en'));
-    }
-
-    // --- 核心功能：載入課程與句子 ---
-    function loadLesson(index) {
-        currentLessonIndex = index;
-        currentSentenceIndex = 0;
-        lessonTitle.innerText = lessonData[currentLessonIndex].title;
-        updateSentenceDisplay();
-    }
-
-    function updateSentenceDisplay() {
-        const sentences = lessonData[currentLessonIndex].sentences;
-        currentSentenceDiv.innerText = sentences[currentSentenceIndex];
-        counterDiv.innerText = `${currentSentenceIndex + 1} / ${sentences.length}`;
-        
+    // --- 渲染卡片 ---
+    function renderCards(lessonName) {
+        const container = document.getElementById('contentArea');
+        container.innerHTML = '';
         // 重置錄音狀態
-        resetRecordingUI();
-        statusDiv.innerText = "";
+        mediaRecorders = {};
+        audioChunks = {};
+        audioBlobs = {};
+
+        lessons[lessonName].forEach((sentence, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="sentence">${sentence}</div>
+                <div class="btn-group">
+                    <div>
+                        <button class="action-btn speak-btn" onclick="speak('${sentence.replace(/'/g, "\\'")}')">🔊</button>
+                    </div>
+                    <div>
+                        <button class="action-btn rec-btn" id="rec-btn-${index}" onclick="toggleRecord(${index})">🎤</button>
+                    </div>
+                </div>
+                <button class="play-my-voice-btn" id="play-btn-${index}" onclick="playMyVoice(${index})">▶️ 播我的錄音</button>
+            `;
+            container.appendChild(card);
+        });
     }
 
-    function resetRecordingUI() {
-        playbackBtn.classList.add('disabled');
-        audioBlob = null;
-        if (isRecording) {
-            stopRecording();
-        }
+    // --- 老師唸 (TTS) ---
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        msg.rate = 0.8; // 稍微放慢語速
+        window.speechSynthesis.speak(msg);
     }
 
-    // --- 核心功能：文字轉語音 (老師唸) ---
-    function speakSentence() {
-        if (synth.speaking) {
-            synth.cancel();
-        }
-        const text = lessonData[currentLessonIndex].sentences[currentSentenceIndex];
-        const utterThis = new SpeechSynthesisUtterance(text);
-        
-        // 嘗試選擇一個較好的英文聲音
-        if (voices.length > 0) {
-             // 優先尋找 Google 或 Microsoft 的高品質女聲
-             let preferredVoice = voices.find(v => (v.name.includes('Google') || v.name.includes('Samantha')) && v.lang === 'en-US');
-             if (preferredVoice) {
-                 utterThis.voice = preferredVoice;
-             } else {
-                 utterThis.voice = voices[0]; // 否則使用第一個可用的英文
-             }
-        }
-        
-        utterThis.rate = 0.9; // 稍微放慢速度更適合學習
-        synth.speak(utterThis);
-        statusDiv.innerText = "正在播放示範...";
-        utterThis.onend = () => { statusDiv.innerText = ""; };
-    }
+    // --- 錄音功能 ---
+    async function toggleRecord(index) {
+        const btn = document.getElementById(`rec-btn-${index}`);
+        const playBtn = document.getElementById(`play-btn-${index}`);
 
-    // --- 核心功能：錄音 (學生讀) ---
-    // 處理跨平台錄音的複雜性 (特別是 iOS Safari)
-    async function setupRecording() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert("您的瀏覽器不支援錄音功能。請使用 Chrome, Safari 或 Firefox。");
+        // 如果正在錄音 -> 停止
+        if (btn.classList.contains('recording')) {
+            mediaRecorders[index].stop();
+            btn.classList.remove('recording');
+            btn.innerText = '🎤';
             return;
         }
 
+        // 如果沒在錄音 -> 開始
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            // 檢查瀏覽器支援的錄音格式
-            let options = { mimeType: 'audio/webm' };
+            // iOS 支援格式檢查
+            let mimeType = 'audio/webm';
             if (!MediaRecorder.isTypeSupported('audio/webm')) {
-                 // iOS Safari 通常需要 mp4
-                 options = { mimeType: 'audio/mp4' };
-                 if (!MediaRecorder.isTypeSupported('audio/mp4')) {
-                     options = {}; // 使用瀏覽器預設
-                 }
+                mimeType = 'audio/mp4'; // iOS Safari 常用
             }
 
-            mediaRecorder = new MediaRecorder(stream, options);
+            const recorder = new MediaRecorder(stream, { mimeType: mimeType });
+            mediaRecorders[index] = recorder;
+            audioChunks[index] = [];
 
-            mediaRecorder.ondataavailable = (e) => {
-                audioChunks.push(e.data);
+            recorder.ondataavailable = (e) => {
+                audioChunks[index].push(e.data);
             };
 
-            mediaRecorder.onstop = () => {
-                // 錄音結束，建立音頻 Blob
-                const mimeType = mediaRecorder.mimeType || 'audio/webm'; // 獲取實際使用的格式
-                audioBlob = new Blob(audioChunks, { type: mimeType });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                playbackAudio.src = audioUrl;
-                playbackBtn.classList.remove('disabled');
-                statusDiv.innerText = "錄音完成，點擊播放鍵聽聽看。";
+            recorder.onstop = () => {
+                const blob = new Blob(audioChunks[index], { type: mimeType });
+                audioBlobs[index] = URL.createObjectURL(blob);
+                playBtn.style.display = 'block'; // 顯示播放按鈕
+                
+                // 停止麥克風使用
+                stream.getTracks().forEach(track => track.stop());
             };
+
+            recorder.start();
+            btn.classList.add('recording');
+            btn.innerText = '⏹'; // 停止符號
+            playBtn.style.display = 'none'; // 錄音時隱藏播放鍵
 
         } catch (err) {
-            console.error("無法存取麥克風:", err);
-            alert("無法存取麥克風。請確保您已授權麥克風權限，且使用 HTTPS 連線。如果在 iOS 上，請使用 Safari 開啟。");
+            console.error(err);
+            alert('無法存取麥克風，請確認權限或使用 Safari/Chrome 開啟。');
         }
     }
 
-    function toggleRecording() {
-        if (!mediaRecorder) {
-            alert("正在初始化麥克風，請稍後再試...");
-            setupRecording(); // 嘗試重新初始化
-            return;
-        }
-
-        if (isRecording) {
-            stopRecording();
-        } else {
-            startRecording();
+    // --- 播我的錄音 ---
+    function playMyVoice(index) {
+        if (audioBlobs[index]) {
+            const audio = new Audio(audioBlobs[index]);
+            audio.play();
         }
     }
 
-    function startRecording() {
-        audioChunks = [];
-        mediaRecorder.start();
-        isRecording = true;
-        recordBtn.classList.add('recording');
-        recordBtn.innerText = "⬛"; // 停止符號
-        recLabel.innerText = "停止";
-        statusDiv.innerText = "正在錄音...";
-        playbackBtn.classList.add('disabled');
-    }
-
-    function stopRecording() {
-        mediaRecorder.stop();
-        isRecording = false;
-        recordBtn.classList.remove('recording');
-        recordBtn.innerText = "🎤";
-        recLabel.innerText = "錄音";
-    }
-
-    // --- 核心功能：播放錄音 ---
-    function playRecording() {
-        if (audioBlob) {
-            playbackAudio.play();
-            statusDiv.innerText = "正在播放您的錄音...";
-            playbackAudio.onended = () => { statusDiv.innerText = ""; };
-        }
-    }
-
-    // --- 事件監聽設定 ---
-    function setupEventListeners() {
-        lessonSelect.addEventListener('change', (e) => {
-            loadLesson(e.target.value);
-        });
-
-        prevBtn.addEventListener('click', () => {
-            if (currentSentenceIndex > 0) {
-                currentSentenceIndex--;
-                updateSentenceDisplay();
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (currentSentenceIndex < lessonData[currentLessonIndex].sentences.length - 1) {
-                currentSentenceIndex++;
-                updateSentenceDisplay();
-            }
-        });
-
-        speakBtn.addEventListener('click', speakSentence);
-        
-        // 在第一次點擊時初始化錄音，解決某些行動裝置的權限問題
-        recordBtn.addEventListener('click', async () => {
-            if (!mediaRecorder) {
-                await setupRecording();
-            }
-            toggleRecording();
-        });
-
-        playbackBtn.addEventListener('click', playRecording);
-    }
-
-    // 啟動程式
+    // 啟動
     init();
-    // 預先請求錄音權限 (選用，有時能改善體驗)
-    // setupRecording(); 
-</script>
 
+</script>
 </body>
 </html>
